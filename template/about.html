@@ -1,7 +1,419 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}About{% endblock title %}
+{% block title %}About Us - Our Story & Philosophy{% endblock title %}
+
+{% block extra_head %}
+<style>
+    .about-hero {
+        position: relative;
+        background: linear-gradient(rgba(31, 25, 22, 0.78), rgba(31, 25, 22, 0.88)), url("{% static 'img/Coffee.jpg' %}") center/cover no-repeat;
+        padding: 90px 0 70px 0;
+    }
+    
+    .hover-lift {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .hover-lift:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.12) !important;
+    }
+    
+    .stat-card {
+        background: rgba(255, 255, 255, 0.95);
+        border: 1px solid rgba(218, 165, 32, 0.25);
+        border-radius: 16px;
+        transition: all 0.3s ease;
+    }
+    
+    .stat-card:hover {
+        border-color: var(--cafe-gold);
+        background: #ffffff;
+    }
+    
+    .feature-icon-wrapper {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: rgba(218, 165, 32, 0.15);
+        color: var(--cafe-gold);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.8rem;
+        margin: 0 auto 1.25rem auto;
+        transition: all 0.3s ease;
+    }
+    
+    .hover-lift:hover .feature-icon-wrapper {
+        background: var(--cafe-gold);
+        color: #1F1916;
+        transform: scale(1.08);
+    }
+    
+    .gallery-img-wrapper {
+        position: relative;
+        overflow: hidden;
+        border-radius: 16px;
+        height: 240px;
+    }
+    
+    .gallery-img-wrapper img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+    
+    .gallery-img-wrapper:hover img {
+        transform: scale(1.08);
+    }
+    
+    .gallery-overlay {
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(31, 25, 22, 0.85) 0%, transparent 70%);
+        display: flex;
+        align-items: flex-end;
+        padding: 1.25rem;
+        color: white;
+        opacity: 0.9;
+        transition: opacity 0.3s ease;
+    }
+    
+    .team-avatar {
+        width: 110px;
+        height: 110px;
+        object-fit: cover;
+        border-radius: 50%;
+        border: 4px solid var(--cafe-gold);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+    
+    .accordion-button:not(.collapsed) {
+        background-color: rgba(218, 165, 32, 0.1);
+        color: var(--cafe-dark);
+        font-weight: 600;
+    }
+    
+    .accordion-button:focus {
+        box-shadow: 0 0 0 0.25rem rgba(218, 165, 32, 0.25);
+    }
+</style>
+{% endblock extra_head %}
 
 {% block body %}
-  This is my AboutUs page
+<!-- Hero Header Section -->
+<section class="about-hero text-white text-center mb-5 shadow-sm">
+    <div class="container">
+        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill text-uppercase fw-bold mb-3 tracking-wider">Our Journey & Philosophy</span>
+        <h1 class="display-3 fw-bold font-serif text-warning mb-3">The Musafir Story</h1>
+        <p class="lead max-w-2xl mx-auto text-light opacity-90 fs-4 font-sans-serif" style="max-width: 750px;">
+            A sanctuary for travelers, coffee lovers, and culinary explorers. Every cup tells a tale, and every plate creates a memory.
+        </p>
+    </div>
+</section>
+
+<div class="container pb-5">
+    <!-- Story & Mission Section -->
+    <div class="row align-items-center g-5 mb-5 pb-lg-4">
+        <div class="col-lg-6">
+            <div class="position-relative pe-lg-3">
+                <img src="{% static 'img/Coffee.jpg' %}" class="img-fluid rounded-4 shadow-lg w-100" style="height: 440px; object-fit: cover;" alt="Musafir Cafe Atmosphere">
+                <div class="position-absolute bottom-0 start-0 m-4 p-3 bg-warning text-dark rounded-4 shadow-lg font-serif fw-bold fs-5 border border-white">
+                    <i class="bi bi-geo-alt-fill me-1"></i> Est. 2024 • India
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <span class="badge bg-cafe-dark text-warning px-3 py-2 rounded-pill text-uppercase font-sans-serif fw-bold mb-3">Who We Are</span>
+            <h2 class="display-6 font-serif fw-bold text-dark mb-4">Where Journeys Find a Delicious Pause</h2>
+            <p class="text-muted fs-5 leading-relaxed mb-3">
+                In Hindi and Urdu, <em>"Musafir"</em> means traveler—someone exploring new horizons. We founded Musafir Cafe with a simple, heartfelt promise: to provide a warm, welcoming space where wanderers from all walks of life can pause, relax, and savor exceptional flavors.
+            </p>
+            <p class="text-muted leading-relaxed mb-4">
+                Whether you're stopping by for a quiet morning espresso, meeting friends over wood-fired pizzas, or working on your next big idea, Musafir Cafe blends traditional Indian warmth with modern artisanal cafe culture.
+            </p>
+            
+            <div class="row g-3 pt-2">
+                <div class="col-6 col-md-3">
+                    <div class="p-3 text-center stat-card shadow-sm">
+                        <h3 class="fw-bold font-serif text-warning m-0 fs-2">100%</h3>
+                        <small class="text-muted fw-semibold">Organic Roasts</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 text-center stat-card shadow-sm">
+                        <h3 class="fw-bold font-serif text-warning m-0 fs-2">50k+</h3>
+                        <small class="text-muted fw-semibold">Musafirs Served</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 text-center stat-card shadow-sm">
+                        <h3 class="fw-bold font-serif text-warning m-0 fs-2">35+</h3>
+                        <small class="text-muted fw-semibold">Artisan Recipes</small>
+                    </div>
+                </div>
+                <div class="col-6 col-md-3">
+                    <div class="p-3 text-center stat-card shadow-sm">
+                        <h3 class="fw-bold font-serif text-warning m-0 fs-2">4.9 ★</h3>
+                        <small class="text-muted fw-semibold">Customer Rating</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Pillars Grid -->
+    <div class="py-5 bg-white rounded-4 shadow-sm p-4 p-md-5 my-5 border">
+        <div class="text-center mb-5 style-header" style="max-width: 650px; margin: 0 auto;">
+            <span class="badge bg-warning text-dark px-3 py-1 rounded-pill text-uppercase fw-bold mb-2">Our Promise</span>
+            <h2 class="display-6 font-serif fw-bold text-dark">Why Musafir Cafe Stands Out</h2>
+            <p class="text-muted fs-5">We are committed to delivering excellence in every cup, bite, and interaction.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="p-4 rounded-4 bg-light text-center h-100 border hover-lift shadow-sm">
+                    <div class="feature-icon-wrapper">
+                        <i class="bi bi-award-fill"></i>
+                    </div>
+                    <h5 class="fw-bold font-serif mb-2">Artisanal Quality</h5>
+                    <p class="text-muted small mb-0">Single-origin ethically sourced coffee beans, freshly roasted & brewed by expert baristas daily.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="p-4 rounded-4 bg-light text-center h-100 border hover-lift shadow-sm">
+                    <div class="feature-icon-wrapper">
+                        <i class="bi bi-clock-history"></i>
+                    </div>
+                    <h5 class="fw-bold font-serif mb-2">Smart Token Queue</h5>
+                    <p class="text-muted small mb-0">No waiting in line! Track live kitchen progress of your token real-time right from your phone.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="p-4 rounded-4 bg-light text-center h-100 border hover-lift shadow-sm">
+                    <div class="feature-icon-wrapper">
+                        <i class="bi bi-heart-fill"></i>
+                    </div>
+                    <h5 class="fw-bold font-serif mb-2">Authentic Recipes</h5>
+                    <p class="text-muted small mb-0">From hand-tossed pizzas to gourmet patties and fresh garden bowls made with pure love.</p>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="p-4 rounded-4 bg-light text-center h-100 border hover-lift shadow-sm">
+                    <div class="feature-icon-wrapper">
+                        <i class="bi bi-wifi"></i>
+                    </div>
+                    <h5 class="fw-bold font-serif mb-2">Cozy Sanctuary</h5>
+                    <p class="text-muted small mb-0">Ultra-fast Wi-Fi, ambient seating, aesthetic decor, and relaxing acoustic playlists.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Culinary Highlights / Gallery Section -->
+    <div class="my-5 py-4">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-end mb-4">
+            <div>
+                <span class="badge bg-warning text-dark px-3 py-1 rounded-pill text-uppercase fw-bold mb-2">Visual Tour</span>
+                <h2 class="display-6 font-serif fw-bold text-dark mb-1">A Glimpse into Musafir Cafe</h2>
+                <p class="text-muted mb-0">Freshly served dishes and signature beverages crafted for our guests</p>
+            </div>
+            <div class="mt-3 mt-md-0">
+                <a href="{% url 'menu' %}" class="btn btn-outline-dark rounded-pill px-4 fw-bold">Explore Full Menu <i class="bi bi-arrow-right ms-1"></i></a>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-6 col-md-4">
+                <div class="gallery-img-wrapper shadow-sm">
+                    <img src="{% static 'img/Coffee.jpg' %}" alt="Artisan Coffee">
+                    <div class="gallery-overlay">
+                        <div>
+                            <h6 class="fw-bold m-0 text-warning">Specialty Brews</h6>
+                            <small class="text-light opacity-75">Espresso, Cappuccino & Cold Brews</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="gallery-img-wrapper shadow-sm">
+                    <img src="{% static 'img/pizza.jpg' %}" alt="Wood-fired Pizza">
+                    <div class="gallery-overlay">
+                        <div>
+                            <h6 class="fw-bold m-0 text-warning">Wood-Fired Pizzas</h6>
+                            <small class="text-light opacity-75">Artisan Mozzarella & Crisp Crusts</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="gallery-img-wrapper shadow-sm">
+                    <img src="{% static 'img/Burger.jpg' %}" alt="Gourmet Burgers">
+                    <div class="gallery-overlay">
+                        <div>
+                            <h6 class="fw-bold m-0 text-warning">Gourmet Burgers</h6>
+                            <small class="text-light opacity-75">Juicy Patties & Signature Sauces</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="gallery-img-wrapper shadow-sm">
+                    <img src="{% static 'img/Pasta.jpg' %}" alt="Creamy Pastas">
+                    <div class="gallery-overlay">
+                        <div>
+                            <h6 class="fw-bold m-0 text-warning">Handcrafted Pastas</h6>
+                            <small class="text-light opacity-75">Alfredo, Arrabbiata & Pesto Specialities</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="gallery-img-wrapper shadow-sm">
+                    <img src="{% static 'img/combo.jpg' %}" alt="Musafir Combos">
+                    <div class="gallery-overlay">
+                        <div>
+                            <h6 class="fw-bold m-0 text-warning">Musafir Special Combos</h6>
+                            <small class="text-light opacity-75">Perfect Pairing Meals</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-6 col-md-4">
+                <div class="gallery-img-wrapper shadow-sm">
+                    <img src="{% static 'img/Salad.jpg' %}" alt="Fresh Salad Bowls">
+                    <div class="gallery-overlay">
+                        <div>
+                            <h6 class="fw-bold m-0 text-warning">Fresh Organic Bowls</h6>
+                            <small class="text-light opacity-75">Healthy Greens & House Dressings</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Meet The Team / Passionate Minds Section -->
+    <div class="py-5 bg-white rounded-4 shadow-sm p-4 p-md-5 my-5 border">
+        <div class="text-center mb-5" style="max-width: 650px; margin: 0 auto;">
+            <span class="badge bg-warning text-dark px-3 py-1 rounded-pill text-uppercase fw-bold mb-2">Our People</span>
+            <h2 class="display-6 font-serif fw-bold text-dark">Meet The Minds Behind Musafir</h2>
+            <p class="text-muted">Passionate chefs, master baristas, and hosts dedicated to making your visit unforgettable.</p>
+        </div>
+
+        <div class="row g-4 justify-content-center">
+            <div class="col-md-4 text-center">
+                <div class="p-4 rounded-4 bg-light border h-100 hover-lift">
+                    <img src="{% static 'img/Coffee.jpg' %}" alt="Master Barista" class="team-avatar mb-3">
+                    <h5 class="fw-bold font-serif text-dark mb-1">Aarav Sharma</h5>
+                    <span class="badge bg-warning text-dark rounded-pill px-3 py-1 mb-3">Master Barista & Roaster</span>
+                    <p class="text-muted small">Passionate about coffee beans for over 8 years, perfecting temperature, grind, and pour-over notes.</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="p-4 rounded-4 bg-light border h-100 hover-lift">
+                    <img src="{% static 'img/pizza.jpg' %}" alt="Executive Chef" class="team-avatar mb-3">
+                    <h5 class="fw-bold font-serif text-dark mb-1">Chef Rohan Patel</h5>
+                    <span class="badge bg-warning text-dark rounded-pill px-3 py-1 mb-3">Executive Culinary Head</span>
+                    <p class="text-muted small">Master of wood-fired dough and gourmet recipes, combining Italian methods with bold Indian flavors.</p>
+                </div>
+            </div>
+            <div class="col-md-4 text-center">
+                <div class="p-4 rounded-4 bg-light border h-100 hover-lift">
+                    <img src="{% static 'img/combo.jpg' %}" alt="Guest Experience Manager" class="team-avatar mb-3">
+                    <h5 class="fw-bold font-serif text-dark mb-1">Priya Nair</h5>
+                    <span class="badge bg-warning text-dark rounded-pill px-3 py-1 mb-3">Guest Experience Lead</span>
+                    <p class="text-muted small">Ensuring every traveler, couple, and student feels right at home with warm hospitality and quick service.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FAQ Accordion Section -->
+    <div class="my-5 py-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="text-center mb-4">
+                    <span class="badge bg-warning text-dark px-3 py-1 rounded-pill text-uppercase fw-bold mb-2">Got Questions?</span>
+                    <h2 class="display-6 font-serif fw-bold text-dark">Frequently Asked Questions</h2>
+                    <p class="text-muted">Everything you need to know before visiting Musafir Cafe</p>
+                </div>
+
+                <div class="accordion shadow-sm rounded-4 overflow-hidden border" id="musafirFaqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingOne">
+                            <button class="accordion-button font-serif fs-5 py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                <i class="bi bi-ticket-perforated text-warning me-2 fs-4"></i> How does the Live Token & Kitchen Tracking work?
+                            </button>
+                        </h2>
+                        <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#musafirFaqAccordion">
+                            <div class="accordion-body text-muted leading-relaxed">
+                                When you place an order online or at our counter, you get a unique Token ID (e.g. A104). You can track the status of your order live on our website—from <em>"Received"</em> to <em>"Preparing in Kitchen"</em> and <em>"Ready for Pickup/Delivery"</em>.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingTwo">
+                            <button class="accordion-button collapsed font-serif fs-5 py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                <i class="bi bi-wifi text-warning me-2 fs-4"></i> Do you provide high-speed Wi-Fi and power outlets for work?
+                            </button>
+                        </h2>
+                        <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#musafirFaqAccordion">
+                            <div class="accordion-body text-muted leading-relaxed">
+                                Absolutely! Musafir Cafe welcomes digital nomads, students, and remote workers. We offer complimentary high-speed Wi-Fi and power charging sockets near most of our seating booths.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingThree">
+                            <button class="accordion-button collapsed font-serif fs-5 py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                <i class="bi bi-egg-fried text-warning me-2 fs-4"></i> Are there vegetarian and vegan options available?
+                            </button>
+                        </h2>
+                        <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#musafirFaqAccordion">
+                            <div class="accordion-body text-muted leading-relaxed">
+                                Yes! Our menu features a wide variety of 100% vegetarian pizzas, pastas, burgers, fresh salad bowls, and plant-based milk alternatives (Almond & Oat milk) for all our specialty coffees.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <h2 class="accordion-header" id="headingFour">
+                            <button class="accordion-button collapsed font-serif fs-5 py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                                <i class="bi bi-calendar-event text-warning me-2 fs-4"></i> Can I reserve tables or host small private events?
+                            </button>
+                        </h2>
+                        <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#musafirFaqAccordion">
+                            <div class="accordion-body text-muted leading-relaxed">
+                                Yes! We host acoustic music nights, book readings, and private birthday celebrations. Feel free to contact us via our <a href="{% url 'contact' %}" class="text-warning text-decoration-underline fw-bold">Contact Page</a> for reservations.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Section -->
+    <div class="p-5 bg-cafe-dark text-white rounded-4 text-center my-4 position-relative overflow-hidden shadow-lg border border-warning" style="background: linear-gradient(135deg, #1F1916 0%, #34251D 100%);">
+        <div class="position-relative z-1 py-3">
+            <span class="badge bg-warning text-dark px-3 py-1 rounded-pill text-uppercase fw-bold mb-3">Join Us Today</span>
+            <h2 class="font-serif fw-bold text-warning display-5 mb-3">Ready to Experience Musafir Cafe?</h2>
+            <p class="text-light opacity-90 max-w-lg mx-auto mb-4 fs-5" style="max-width: 650px;">
+                Explore our handcrafted menu items or place your order online right now with real-time kitchen tracking!
+            </p>
+            <div class="d-flex flex-wrap gap-3 justify-content-center">
+                <a href="{% url 'menu' %}" class="btn btn-warning btn-lg rounded-pill px-4 py-3 fw-bold shadow">
+                    Explore Menu 📖
+                </a>
+                <a href="{% url 'place_order' %}" class="btn btn-outline-light btn-lg rounded-pill px-4 py-3 fw-bold shadow">
+                    Order Online 🛵
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock body %}
+

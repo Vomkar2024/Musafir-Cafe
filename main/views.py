@@ -1,52 +1,57 @@
-from django.shortcuts import render, HttpResponse, redirect, get_object_or_404
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse
-from datetime import datetime
-from .models import Contact, MenuItem, Order, OrderItem, Addon
 from django.contrib import messages
+from .models import Contact, MenuItem, Order, OrderItem
 
 
 def index(request):
-    context = {
-        "title": "Main"
-    }
-    return render(request, 'index.html', context)
+    featured_items = MenuItem.objects.filter(is_available=True)[:6]
+    return render(request, 'index.html', {
+        'title': 'Home',
+        'featured_items': featured_items
+    })
 
 
-def Menu(request):
-    menu_items = MenuItem.objects.filter(
-        is_available=True
-    ).order_by('category', 'name')
+def menu(request):
+    category = request.GET.get('category', '').strip()
+    items = MenuItem.objects.filter(is_available=True)
+    if category and category in ['food', 'drink']:
+        items = items.filter(category=category)
 
-    return render(
-        request,
-        'menu.html',
-        {
-            'menu_items': menu_items
-        }
-    )
+    return render(request, 'menu.html', {
+        'menu_items': items,
+        'selected_category': category
+    })
 
 
 def about(request):
-    return render(request, 'About.html')
+    return render(request, 'about.html')
 
 
 def services(request):
-    return render(request, 'Services.html')
+    return render(request, 'services.html')
 
 
 def contact(request):
     if request.method == 'POST':
-        name = request.POST.get('name')
-        email = request.POST.get('email')
-        phone = request.POST.get('phone')
-        message = request.POST.get('message')
-        
-        contact_obj = Contact(name=name, email=email, phone=phone, message=message, date=datetime.today())
-        contact_obj.save()
+        name = request.POST.get('name', '').strip()
+        email = request.POST.get('email', '').strip()
+        phone = request.POST.get('phone', '').strip()
+        message = request.POST.get('message', '').strip()
 
-        messages.success(request, "We have received your message😊")
-        
-    return render(request, 'Contact.html')
+        if name and email and message:
+            Contact.objects.create(
+                name=name,
+                email=email,
+                phone=phone,
+                message=message
+            )
+            messages.success(request, "We have received your message😊")
+            return redirect('contact')
+        else:
+            messages.error(request, "Please complete all required fields.")
+
+    return render(request, 'contact.html')
 
 
 def order_tracking(request, token=None):
@@ -96,7 +101,7 @@ def order_lookup(request):
 def kitchen_dashboard(request):
     orders = Order.objects.all().order_by('-created_at')
     
-    # Simple count summary
+    # Summary metrics
     active_orders = orders.exclude(status__in=['completed', 'cancelled'])
     placed_count = orders.filter(status='placed').count()
     confirmed_count = orders.filter(status='confirmed').count()
@@ -170,7 +175,6 @@ def place_order(request):
             estimated_wait_minutes=int(wait_minutes) if str(wait_minutes).isdigit() else 15
         )
 
-        # Process selected menu item if any
         menu_item_id = request.POST.get('menu_item_id')
         quantity = int(request.POST.get('quantity', 1))
         
@@ -187,7 +191,6 @@ def place_order(request):
                 )
                 total = float(unit_price) * quantity
 
-        # If no item selected or total is 0, add demo items if present or fallback
         if total == 0:
             sample_items = MenuItem.objects.filter(is_available=True)[:2]
             for item in sample_items:
@@ -208,5 +211,6 @@ def place_order(request):
 
     menu_items = MenuItem.objects.filter(is_available=True)
     return render(request, 'place_order.html', {'menu_items': menu_items})
+
 
 

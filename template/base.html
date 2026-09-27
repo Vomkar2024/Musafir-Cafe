@@ -4,70 +4,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title> {%block title%}{%endblock title%} | Musafir Cafe</title>
+    <title>{% block title %}Musafir Cafe{% endblock title %} | Musafir Cafe</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        :root {
+            --cafe-primary: #8B4513;
+            --cafe-accent: #D2691E;
+            --cafe-gold: #DAA520;
+            --cafe-dark: #1F1916;
+            --cafe-cream: #FAF6F0;
+        }
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: #2D2725;
+            background-color: #FAF8F5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .main-content {
+            flex: 1;
+        }
+        h1, h2, h3, .font-serif {
+            font-family: 'Playfair Display', serif;
+        }
+        .bg-cafe-dark {
+            background-color: var(--cafe-dark) !important;
+        }
+        .btn-cafe-gold {
+            background-color: var(--cafe-gold);
+            color: #1F1916;
+            font-weight: 600;
+            border: none;
+        }
+        .btn-cafe-gold:hover {
+            background-color: #c4931a;
+            color: #fff;
+        }
+        .badge-cafe {
+            background-color: var(--cafe-accent);
+            color: white;
+        }
+        .nav-link.active {
+            font-weight: 600;
+            color: var(--cafe-gold) !important;
+        }
+        footer {
+            background-color: var(--cafe-dark);
+            color: #D1C7BD;
+        }
+        footer a {
+            color: #D1C7BD;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        footer a:hover {
+            color: var(--cafe-gold);
+        }
+    </style>
+    {% block extra_head %}{% endblock extra_head %}
 </head>
 
 <body>
-    <!-- navbar -->
-    <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Musafir Cafe</a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-cafe-dark navbar-dark sticky-top shadow-sm">
+        <div class="container-fluid px-md-4">
+            <a class="navbar-brand font-serif fs-3 fw-bold text-warning" href="{% url 'main' %}">
+                ☕ Musafir Cafe
+            </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                 data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
                 aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
                     <li class="nav-item">
-                        <a class="nav-link active" aria-current="page" href="/">Home</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'main' %}active{% endif %}" href="{% url 'main' %}">
+                            <i class="bi bi-house-door me-1"></i> Home
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/menu">Menu</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'menu' %}active{% endif %}" href="{% url 'menu' %}">
+                            <i class="bi bi-journal-richtext me-1"></i> Menu
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/place-order/">Place Order</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'place_order' %}active{% endif %}" href="{% url 'place_order' %}">
+                            <i class="bi bi-cart-plus me-1"></i> Place Order
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/order/">Track Order 🎟️</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'order_tracking' or request.resolver_match.url_name == 'order_tracking_home' %}active{% endif %}" href="{% url 'order_tracking_home' %}">
+                            <i class="bi bi-ticket-perforated me-1"></i> Track Order
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-warning fw-semibold" href="/kitchen/">Kitchen 👨‍🍳</a>
+                        <a class="nav-link text-warning fw-semibold {% if request.resolver_match.url_name == 'kitchen_dashboard' %}active{% endif %}" href="{% url 'kitchen_dashboard' %}">
+                            <i class="bi bi-fire me-1"></i> Kitchen 👨‍🍳
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/about">About</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'services' %}active{% endif %}" href="{% url 'services' %}">
+                            <i class="bi bi-cup-hot me-1"></i> Services
+                        </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/contact">Contact Us</a>
+                        <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">
+                            <i class="bi bi-info-circle me-1"></i> About Us
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'contact' %}active{% endif %}" href="{% url 'contact' %}">
+                            <i class="bi bi-envelope me-1"></i> Contact Us
+                        </a>
                     </li>
                 </ul>
-                <form class="d-flex" action="{% url 'order_lookup' %}" method="POST" role="search">
+                <form class="d-flex my-2 my-lg-0" action="{% url 'order_lookup' %}" method="POST">
                     {% csrf_token %}
-                    <input class="form-control me-2 text-uppercase" type="search" name="token" placeholder="Token # (e.g. A104)" aria-label="Track Token" required />
-                    <button class="btn btn-outline-warning" type="submit">Track</button>
+                    <div class="input-group input-group-sm">
+                        <input class="form-control text-uppercase fw-semibold" type="search" name="token" placeholder="Token # (e.g. A104)" aria-label="Track Token" required />
+                        <button class="btn btn-cafe-gold" type="submit">
+                            <i class="bi bi-search"></i>
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>
     </nav>
 
+    <!-- Global Messages Banner -->
     {% if messages %}
-    {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-        <strong>{{ message }}</strong>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    <div class="container mt-3">
+        {% for message in messages %}
+        <div class="alert alert-{{ message.tags }} alert-dismissible fade show shadow-sm rounded-3" role="alert">
+            <strong>{{ message }}</strong>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
     {% endif %}
 
-    {% block body %}
-    {% endblock body %}
+    <!-- Main Content -->
+    <main class="main-content">
+        {% block body %}
+        {% endblock body %}
+    </main>
 
+    <!-- Footer -->
+    <footer class="pt-5 pb-4 mt-5">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <h4 class="font-serif text-warning fw-bold mb-3">☕ Musafir Cafe</h4>
+                    <p class="small text-light opacity-75">
+                        A cozy haven for travelers, dreamers, and coffee lovers. Crafted with passion, served with warm Indian hospitality.
+                    </p>
+                    <div class="d-flex gap-3 fs-5 mt-3 text-warning">
+                        <i class="bi bi-instagram role-button"></i>
+                        <i class="bi bi-facebook role-button"></i>
+                        <i class="bi bi-twitter-x role-button"></i>
+                        <i class="bi bi-whatsapp role-button"></i>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-2 ms-auto">
+                    <h6 class="text-uppercase fw-bold text-light mb-3 small tracking-wider">Navigation</h6>
+                    <ul class="list-unstyled small space-y-2">
+                        <li class="mb-2"><a href="{% url 'main' %}">Home</a></li>
+                        <li class="mb-2"><a href="{% url 'menu' %}">Menu Card</a></li>
+                        <li class="mb-2"><a href="{% url 'place_order' %}">Place Order</a></li>
+                        <li class="mb-2"><a href="{% url 'order_tracking_home' %}">Track Token</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-2">
+                    <h6 class="text-uppercase fw-bold text-light mb-3 small tracking-wider">Explore</h6>
+                    <ul class="list-unstyled small space-y-2">
+                        <li class="mb-2"><a href="{% url 'services' %}">Our Services</a></li>
+                        <li class="mb-2"><a href="{% url 'about' %}">Our Story</a></li>
+                        <li class="mb-2"><a href="{% url 'contact' %}">Contact Us</a></li>
+                        <li class="mb-2"><a href="{% url 'kitchen_dashboard' %}">Kitchen Portal</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h6 class="text-uppercase fw-bold text-light mb-3 small tracking-wider">Cafe Hours</h6>
+                    <p class="small mb-1"><i class="bi bi-clock me-2 text-warning"></i>Mon - Sun: 8:00 AM - 11:00 PM</p>
+                    <p class="small mb-3"><i class="bi bi-geo-alt me-2 text-warning"></i>Main Street Cafe Hub, India</p>
+                    <p class="small"><i class="bi bi-telephone me-2 text-warning"></i>+91 98765 43210</p>
+                </div>
+            </div>
+            <hr class="my-4 border-secondary opacity-50">
+            <div class="d-flex flex-wrap justify-content-between align-items-center small text-light opacity-75">
+                <span>© {% now "Y" %} Musafir Cafe. All rights reserved.</span>
+                <span>Designed & Built with ❤️</span>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmxc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
+    {% block extra_js %}{% endblock extra_js %}
 </body>
 
 </html>

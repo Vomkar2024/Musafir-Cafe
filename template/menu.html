@@ -1,33 +1,186 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Menu{% endblock title %}
+{% block title %}Menu Card{% endblock title %}
 
 {% block body %}
-<div class="container mt-5">
-    <h1 class="text-center mb-4">Our Menu</h1>
+<!-- Hero Header -->
+<div class="bg-cafe-dark text-white py-5 text-center position-relative mb-4">
+    <div class="container py-3">
+        <h1 class="display-4 fw-bold font-serif text-warning">Our Culinary Menu</h1>
+        <p class="lead max-w-2xl mx-auto text-light opacity-75">
+            Handcrafted beverages, wood-fired pizzas, and gourmet pastas made fresh daily.
+        </p>
+    </div>
+</div>
 
-    <div class="row row-cols-1 row-cols-md-3 g-4">
+<div class="container pb-5">
+    <!-- Category Filter Bar -->
+    <div class="d-flex flex-wrap justify-content-center gap-2 mb-5">
+        <a href="{% url 'menu' %}" class="btn {% if not selected_category %}btn-warning fw-bold{% else %}btn-outline-dark{% endif %} rounded-pill px-4">
+            🍽️ All Items
+        </a>
+        <a href="{% url 'menu' %}?category=food" class="btn {% if selected_category == 'food' %}btn-warning fw-bold{% else %}btn-outline-dark{% endif %} rounded-pill px-4">
+            🍕 Food
+        </a>
+        <a href="{% url 'menu' %}?category=drink" class="btn {% if selected_category == 'drink' %}btn-warning fw-bold{% else %}btn-outline-dark{% endif %} rounded-pill px-4">
+            ☕ Beverages
+        </a>
+    </div>
+
+    <!-- Menu Items Grid -->
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         {% for item in menu_items %}
         <div class="col">
-            <div class="card h-100 shadow-sm">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden card-hover">
                 {% if item.image %}
-                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}" style="height: 200px; object-fit: cover;">
+                <img src="{{ item.image.url }}" class="card-img-top" height="220" style="object-fit: cover;" alt="{{ item.name }}">
+                {% elif 'coffee' in item.name.lower or 'brew' in item.name.lower or item.category == 'drink' %}
+                <img src="{% static 'img/Coffee.jpg' %}" class="card-img-top" height="220" style="object-fit: cover;" alt="{{ item.name }}">
+                {% elif 'pasta' in item.name.lower %}
+                <img src="{% static 'img/Pasta.jpg' %}" class="card-img-top" height="220" style="object-fit: cover;" alt="{{ item.name }}">
+                {% elif 'combo' in item.name.lower %}
+                <img src="{% static 'img/Combo.jpg' %}" class="card-img-top" height="220" style="object-fit: cover;" alt="{{ item.name }}">
+                {% elif 'burger' in item.name.lower %}
+                <img src="{% static 'img/Burger.jpg' %}" class="card-img-top" height="220" style="object-fit: cover;" alt="{{ item.name }}">
+                {% elif 'salad' in item.name.lower %}
+                <img src="{% static 'img/Salad.jpg' %}" class="card-img-top" height="220" style="object-fit: cover;" alt="{{ item.name }}">
                 {% else %}
-                    <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
-                        No Image Available
-                    </div>
+                <img src="{% static 'img/pizza.jpg' %}" class="card-img-top" height="220" style="object-fit: cover;" alt="{{ item.name }}">
                 {% endif %}
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">{{ item.name }}</h5>
-                    <p class="card-text text-muted">{{ item.description }}</p>
-                    <h4 class="mt-auto text-success">₹{{ item.price }}</h4>
-                    <button class="btn btn-primary mt-3 w-100">Add to Cart</button>
+                <div class="card-body d-flex flex-column p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-bold font-serif m-0 text-dark">{{ item.name }}</h5>
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-1 fs-6 fw-bold">₹{{ item.price }}</span>
+                    </div>
+                    <span class="badge bg-light text-dark border text-capitalize align-self-start mb-2">
+                        {{ item.get_category_display }}
+                    </span>
+                    <p class="card-text text-muted small flex-grow-1">
+                        {{ item.description|default:"Made with premium ingredients, prepared hot and fresh upon order." }}
+                    </p>
+                    <div class="pt-3 border-top mt-auto">
+                        <a href="{% url 'place_order' %}" class="btn btn-outline-dark w-100 rounded-pill fw-semibold btn-sm">
+                            <i class="bi bi-cart-plus me-1"></i> Order Now
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
         {% empty %}
-        <div class="col-12 text-center">
-            <p class="lead">No menu items are currently available.</p>
+        <!-- Fallback Static Cards when DB items are empty -->
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                <img src="{% static 'img/pizza.jpg' %}" class="card-img-top" height="220" style="object-fit: cover;" alt="Pizza">
+                <div class="card-body d-flex flex-column p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-bold font-serif m-0 text-dark">Classic Cheese Pizza</h5>
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-1 fs-6 fw-bold">₹99</span>
+                    </div>
+                    <span class="badge bg-light text-dark border align-self-start mb-2">Food</span>
+                    <p class="card-text text-muted small flex-grow-1">
+                        Oven-baked pizza topped with rich tomato sauce and melted golden mozzarella. 🍕
+                    </p>
+                    <div class="pt-3 border-top mt-auto">
+                        <a href="{% url 'place_order' %}" class="btn btn-outline-dark w-100 rounded-pill fw-semibold btn-sm">Order Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                <img src="{% static 'img/Pasta.jpg' %}" class="card-img-top" height="220" style="object-fit: cover;" alt="Pasta">
+                <div class="card-body d-flex flex-column p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-bold font-serif m-0 text-dark">Creamy Herb Pasta</h5>
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-1 fs-6 fw-bold">₹89</span>
+                    </div>
+                    <span class="badge bg-light text-dark border align-self-start mb-2">Food</span>
+                    <p class="card-text text-muted small flex-grow-1">
+                        Delicious penne tossed in a creamy garlic white sauce with fresh herbs. 🍝
+                    </p>
+                    <div class="pt-3 border-top mt-auto">
+                        <a href="{% url 'place_order' %}" class="btn btn-outline-dark w-100 rounded-pill fw-semibold btn-sm">Order Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                <img src="{% static 'img/Burger.jpg' %}" class="card-img-top" height="220" style="object-fit: cover;" alt="Burger">
+                <div class="card-body d-flex flex-column p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-bold font-serif m-0 text-dark">Musafir Signature Burger</h5>
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-1 fs-6 fw-bold">₹79</span>
+                    </div>
+                    <span class="badge bg-light text-dark border align-self-start mb-2">Food</span>
+                    <p class="card-text text-muted small flex-grow-1">
+                        Juicy patty served in a toasted bun with crisp lettuce, cheese & secret sauce. 🍔
+                    </p>
+                    <div class="pt-3 border-top mt-auto">
+                        <a href="{% url 'place_order' %}" class="btn btn-outline-dark w-100 rounded-pill fw-semibold btn-sm">Order Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                <img src="{% static 'img/Coffee.jpg' %}" class="card-img-top" height="220" style="object-fit: cover;" alt="Coffee">
+                <div class="card-body d-flex flex-column p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-bold font-serif m-0 text-dark">Artisanal Cold Brew Coffee</h5>
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-1 fs-6 fw-bold">₹69</span>
+                    </div>
+                    <span class="badge bg-light text-dark border align-self-start mb-2">Beverage</span>
+                    <p class="card-text text-muted small flex-grow-1">
+                        Freshly brewed Arabica beans chilled to perfection with a bold smooth profile. ☕
+                    </p>
+                    <div class="pt-3 border-top mt-auto">
+                        <a href="{% url 'place_order' %}" class="btn btn-outline-dark w-100 rounded-pill fw-semibold btn-sm">Order Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                <img src="{% static 'img/Salad.jpg' %}" class="card-img-top" height="220" style="object-fit: cover;" alt="Salad">
+                <div class="card-body d-flex flex-column p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-bold font-serif m-0 text-dark">Garden Harvest Salad</h5>
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-1 fs-6 fw-bold">₹59</span>
+                    </div>
+                    <span class="badge bg-light text-dark border align-self-start mb-2">Food</span>
+                    <p class="card-text text-muted small flex-grow-1">
+                        A refreshing blend of crisp greens, cherry tomatoes, olives & house vinaigrette. 🥗
+                    </p>
+                    <div class="pt-3 border-top mt-auto">
+                        <a href="{% url 'place_order' %}" class="btn btn-outline-dark w-100 rounded-pill fw-semibold btn-sm">Order Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col">
+            <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+                <img src="{% static 'img/Combo.jpg' %}" class="card-img-top" height="220" style="object-fit: cover;" alt="Combo">
+                <div class="card-body d-flex flex-column p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h5 class="fw-bold font-serif m-0 text-dark">Special Musafir Cafe Combo</h5>
+                        <span class="badge bg-warning text-dark rounded-pill px-3 py-1 fs-6 fw-bold">₹150</span>
+                    </div>
+                    <span class="badge bg-light text-dark border align-self-start mb-2">Combo</span>
+                    <p class="card-text text-muted small flex-grow-1">
+                        Special combo meal featuring Burger, Crispy Fries & Cold Brew Coffee! 🍔🍟☕
+                    </p>
+                    <div class="pt-3 border-top mt-auto">
+                        <a href="{% url 'place_order' %}" class="btn btn-outline-dark w-100 rounded-pill fw-semibold btn-sm">Order Now</a>
+                    </div>
+                </div>
+            </div>
         </div>
         {% endfor %}
     </div>

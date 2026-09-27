@@ -80,4 +80,20 @@ class ContactAdmin(admin.ModelAdmin):
         'phone',
         'date',
     )
+    search_fields = ('name', 'email', 'phone', 'message')
+    list_filter = ('date',)
+    date_hierarchy = 'date'
+
+
+class CartItemInline(admin.TabularInline):
+    model = CartItem
+    extra = 0
+
+
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'session_key', 'subtotal', 'total', 'created_at')
+    search_fields = ('session_key', 'user__username')
+    inlines = [CartItemInline]
+
 

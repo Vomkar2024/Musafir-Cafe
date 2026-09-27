@@ -3,36 +3,101 @@
 {% block title %}Contact Us{% endblock title %}
 
 {% block body %}
-<div class="container-fluid p-0">
-    <img src="https://images.unsplash.com/photo-1520923642038-b4259acecbd7?q=80&w=1920&auto=format&fit=crop"
-        class="d-block w-100 mx-0" alt="Contact Us">
+<!-- Hero Header -->
+<div class="bg-cafe-dark text-white py-5 text-center mb-5">
+    <div class="container py-3">
+        <h1 class="display-4 fw-bold font-serif text-warning">Get in Touch with Musafir</h1>
+        <p class="lead max-w-xl mx-auto text-light opacity-75">
+            We'd love to hear from you! Send us your feedback, table booking requests, or questions.
+        </p>
+    </div>
 </div>
-<h2 class="text-center dark">
-    Contact Us
-</h2>
-<div class="container">
-    {% csrf_token %}
-    <form class="row g-3">
-        <div class="col-md-6">
-            <label for="name" class="form-label">Name</label>
-            <input type="text" class="form-control" id="name" name="name" required placeholder="Enter your name">
+
+<div class="container pb-5">
+    <div class="row g-4 justify-content-center">
+        <!-- Contact Form Card -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-lg rounded-4 p-4 p-md-5">
+                <h3 class="font-serif fw-bold text-dark mb-4">Send Us a Message</h3>
+                
+                <form action="{% url 'contact' %}" method="POST" class="row g-3">
+                    {% csrf_token %}
+                    
+                    <div class="col-md-6">
+                        <label for="name" class="form-label fw-semibold">Your Name *</label>
+                        <input type="text" class="form-control rounded-3 py-2" id="name" name="name" required placeholder="e.g. Rahul Sharma">
+                    </div>
+                    
+                    <div class="col-md-6">
+                        <label for="email" class="form-label fw-semibold">Email Address *</label>
+                        <input type="email" class="form-control rounded-3 py-2" id="email" name="email" required placeholder="name@example.com">
+                    </div>
+                    
+                    <div class="col-12">
+                        <label for="phone" class="form-label fw-semibold">Phone Number</label>
+                        <input type="tel" class="form-control rounded-3 py-2" id="phone" name="phone" placeholder="e.g. +91 98765 43210">
+                    </div>
+                    
+                    <div class="col-12">
+                        <label for="message" class="form-label fw-semibold">Your Message *</label>
+                        <textarea class="form-control rounded-3" id="message" name="message" rows="5" required placeholder="Tell us how we can assist you..."></textarea>
+                    </div>
+                    
+                    <div class="col-12 pt-3">
+                        <button type="submit" class="btn btn-warning w-100 py-3 rounded-pill fw-bold fs-5 shadow-sm">
+                            <i class="bi bi-send-fill me-2"></i> Submit Message
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="col-md-6">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" required placeholder="Enter your email">
+
+        <!-- Contact Info Side Card -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 bg-white p-4 p-md-5 h-100 d-flex flex-column justify-content-between">
+                <div>
+                    <h3 class="font-serif fw-bold text-dark mb-4">Cafe Details</h3>
+                    
+                    <div class="d-flex align-items-start mb-4">
+                        <div class="fs-3 text-warning me-3"><i class="bi bi-geo-alt-fill"></i></div>
+                        <div>
+                            <h6 class="fw-bold text-dark m-0">Address</h6>
+                            <p class="text-muted small m-0">123 Musafir Street, Near City Circle, Cafe Hub, India</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-start mb-4">
+                        <div class="fs-3 text-warning me-3"><i class="bi bi-telephone-fill"></i></div>
+                        <div>
+                            <h6 class="fw-bold text-dark m-0">Call Us</h6>
+                            <p class="text-muted small m-0">+91 98765 43210 / +91 11 2345 6789</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-start mb-4">
+                        <div class="fs-3 text-warning me-3"><i class="bi bi-envelope-fill"></i></div>
+                        <div>
+                            <h6 class="fw-bold text-dark m-0">Email Us</h6>
+                            <p class="text-muted small m-0">hello@musafircafe.com</p>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-start mb-4">
+                        <div class="fs-3 text-warning me-3"><i class="bi bi-clock-fill"></i></div>
+                        <div>
+                            <h6 class="fw-bold text-dark m-0">Opening Hours</h6>
+                            <p class="text-muted small m-0">Monday – Sunday: 8:00 AM – 11:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="p-4 bg-light rounded-4 text-center border mt-4">
+                    <h6 class="fw-bold text-dark mb-2">Need Quick Kitchen Updates?</h6>
+                    <p class="small text-muted mb-3">Track your active order token live on our tracking system.</p>
+                    <a href="{% url 'order_tracking_home' %}" class="btn btn-outline-dark btn-sm rounded-pill px-4 fw-bold">Track Order Ticket 🎟️</a>
+                </div>
+            </div>
         </div>
-        <div class="col-5">
-            <label for="phone" class="form-label">Phone</label>
-            <input type="text" class="form-control" id="phone" name="phone" required
-                placeholder="Enter your phone number">
-        </div>
-        <div class="form-floating">
-            <textarea class="form-control" placeholder="Tell me reason for contacting" id="floatingTextarea"></textarea>
-            <label for="floatingTextarea">Tell me reason for contacting</label>
-        </div>
-        <div class="col-12 py-3">
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
-    </form>
+    </div>
 </div>
 {% endblock body %}

@@ -1,21 +1,24 @@
 from django.db import models
 
-# Create your models here.
+
 class Contact(models.Model):
     name = models.CharField(max_length=122, default="")
     email = models.EmailField(default="")
     phone = models.CharField(max_length=20, default="")
     message = models.TextField(default="")
     date = models.DateTimeField(auto_now_add=True, null=True)
-    
+
+    class Meta:
+        ordering = ['-date']
+
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.email}"
+
 
 class MenuItem(models.Model):
     CATEGORY_CHOICES = [
         ('food', 'Food'),
         ('drink', 'Drink'),
-        ('dessert', 'Dessert'),
     ]
 
     name = models.CharField(max_length=100)
@@ -34,8 +37,12 @@ class MenuItem(models.Model):
     is_available = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['category', 'name']
+
     def __str__(self):
         return self.name
+
 
 class Addon(models.Model):
     name = models.CharField(max_length=200)
@@ -44,6 +51,7 @@ class Addon(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class Order(models.Model):
     ORDER_TYPE_CHOICES = [
@@ -88,6 +96,9 @@ class Order(models.Model):
     estimated_wait_minutes = models.IntegerField(default=15)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        ordering = ['-created_at']
+
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         if not self.token_number:
@@ -118,6 +129,7 @@ class Order(models.Model):
     def __str__(self):
         return f"Order #{self.token_number or self.id} - {self.customer_name}"
 
+
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, related_name='items', on_delete=models.CASCADE)
     menu_item = models.ForeignKey(MenuItem, on_delete=models.SET_NULL, null=True)
@@ -127,6 +139,7 @@ class OrderItem(models.Model):
     def __str__(self):
         return f"{self.quantity}x {self.menu_item.name if self.menu_item else 'Unknown'}"
 
+
 class OrderItemAddon(models.Model):
     order_item = models.ForeignKey(OrderItem, related_name='addons', on_delete=models.CASCADE)
     addon = models.ForeignKey(Addon, on_delete=models.SET_NULL, null=True)
@@ -135,6 +148,7 @@ class OrderItemAddon(models.Model):
 
     def __str__(self):
         return f"{self.quantity}x {self.addon.name if self.addon else 'Unknown'}"
+
 
 class Cart(models.Model):
     session_key = models.CharField(max_length=40, blank=True, null=True)
@@ -194,6 +208,7 @@ class Cart(models.Model):
     def __str__(self):
         return f"Cart {self.id}"
 
+
 class CartItem(models.Model):
     cart = models.ForeignKey(Cart, related_name='items', on_delete=models.CASCADE)
     menu_item = models.ForeignKey(MenuItem, on_delete=models.CASCADE)
@@ -202,6 +217,7 @@ class CartItem(models.Model):
     def __str__(self):
         return f"{self.quantity}x {self.menu_item.name}"
 
+
 class CartItemAddon(models.Model):
     cart_item = models.ForeignKey(CartItem, related_name='addons', on_delete=models.CASCADE)
     addon = models.ForeignKey(Addon, on_delete=models.CASCADE)
@@ -209,3 +225,4 @@ class CartItemAddon(models.Model):
 
     def __str__(self):
         return f"{self.quantity}x {self.addon.name}"
+

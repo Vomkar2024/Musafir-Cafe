@@ -1,9 +1,9 @@
 from django.test import TestCase, Client
 from django.urls import reverse
-from main.models import Order, MenuItem, OrderItem
+from main.models import Order, MenuItem, Contact
 
 
-class OrderWaitingSystemTests(TestCase):
+class MusafirCafeAppTests(TestCase):
     def setUp(self):
         self.client = Client()
         self.item = MenuItem.objects.create(
@@ -19,6 +19,29 @@ class OrderWaitingSystemTests(TestCase):
             estimated_wait_minutes=15
         )
 
+    def test_pages_render_status_200(self):
+        """Test home, menu, about, services, contact, place_order render fine"""
+        for url_name in ['main', 'menu', 'about', 'services', 'contact', 'place_order', 'order_tracking_home']:
+            response = self.client.get(reverse(url_name))
+            self.assertEqual(response.status_code, 200)
+
+    def test_menu_category_filter(self):
+        """Test menu page category filter query parameter"""
+        response = self.client.get(reverse('menu') + '?category=drink')
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Cold Coffee")
+
+    def test_contact_form_submission(self):
+        """Test POST request to contact page creates Contact record"""
+        response = self.client.post(reverse('contact'), {
+            'name': 'Aarav Patel',
+            'email': 'aarav@example.com',
+            'phone': '9876543210',
+            'message': 'Great cafe experience!'
+        }, follow=True)
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(Contact.objects.filter(email='aarav@example.com').exists())
+
     def test_token_generation(self):
         """Test that every order gets a unique token like A101, A102"""
         self.assertTrue(self.order.token_number.startswith('A'))
@@ -31,7 +54,7 @@ class OrderWaitingSystemTests(TestCase):
         self.assertEqual(order.status, 'placed')
 
         # Placed -> Confirmed
-        response = self.client.post(reverse('update_order_status', kwargs={'token': order.token_number}), {
+        self.client.post(reverse('update_order_status', kwargs={'token': order.token_number}), {
             'status': 'confirmed',
             'estimated_wait_minutes': '15'
         })
@@ -39,7 +62,7 @@ class OrderWaitingSystemTests(TestCase):
         self.assertEqual(order.status, 'confirmed')
 
         # Confirmed -> Preparing
-        response = self.client.post(reverse('update_order_status', kwargs={'token': order.token_number}), {
+        self.client.post(reverse('update_order_status', kwargs={'token': order.token_number}), {
             'status': 'preparing',
             'estimated_wait_minutes': '10'
         })
@@ -48,7 +71,7 @@ class OrderWaitingSystemTests(TestCase):
         self.assertEqual(order.estimated_wait_display, '10 minutes')
 
         # Preparing -> Ready
-        response = self.client.post(reverse('update_order_status', kwargs={'token': order.token_number}), {
+        self.client.post(reverse('update_order_status', kwargs={'token': order.token_number}), {
             'status': 'ready',
             'estimated_wait_minutes': '0'
         })
@@ -57,7 +80,7 @@ class OrderWaitingSystemTests(TestCase):
         self.assertEqual(order.estimated_wait_display, 'Ready Now!')
 
         # Ready -> Completed
-        response = self.client.post(reverse('update_order_status', kwargs={'token': order.token_number}), {
+        self.client.post(reverse('update_order_status', kwargs={'token': order.token_number}), {
             'status': 'completed'
         })
         order.refresh_from_db()
@@ -87,4 +110,3 @@ class OrderWaitingSystemTests(TestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, self.order.token_number)
-

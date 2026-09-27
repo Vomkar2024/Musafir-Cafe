@@ -31,7 +31,7 @@ Welcome to **MusafirCafe**, a full-stack Django web application designed for dig
 
 ## ✨ Key Features
 
-- 🍔 **Interactive Digital Menu**: Browse items organized by categories (*Food*, *Drink*, *Dessert*) with availability toggles and pricing.
+- 🍔 **Interactive Digital Menu**: Browse items organized by categories (*Food*, *Drink*) with availability toggles and pricing.
 - 🛒 **Smart Cart & Calculation Engine**: Supports item add-ons, payment method adjustments (e.g. Cash on Delivery charge), and automated **Pairwise Buy-One-Get-One (BOGO)** discount calculation for orders over 5 items.
 - 🎟️ **Automated Token Generation**: Auto-assigns unique order tracking tokens (e.g., `A101`, `A102`, `A103`) upon order placement based on database sequence.
 - ⏱️ **Live Order Tracking Ticket**: Visual progress bar (`Placed` ➔ `Confirmed` ➔ `Preparing` ➔ `Ready` ➔ `Completed`) with dynamic wait time estimation.
@@ -145,7 +145,7 @@ Stores user messages submitted via the contact form:
 
 #### 2. `MenuItem` Model
 Represents items available on the cafe menu:
-- `name`, `description`, `price`, `category` (choices: `food`, `drink`, `dessert`), `image`, `is_available` toggle, and `created_at`.
+- `name`, `description`, `price`, `category` (choices: `food`, `drink`), `image`, `is_available` toggle, and `created_at`.
 
 #### 3. `Addon` Model
 Represents extra add-ons (e.g. Extra Cheese, Whipped Cream):
