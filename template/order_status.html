@@ -1,0 +1,214 @@
+{% extends 'base.html' %}
+
+{% block title %}Order Status{% endblock title %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            
+            <!-- Lookup Bar -->
+            <div class="card shadow-sm border-0 mb-4 rounded-4" style="background: #f8f9fa;">
+                <div class="card-body p-3">
+                    <form action="{% url 'order_lookup' %}" method="POST" class="d-flex align-items-center">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <span class="input-group-text bg-white border-end-0 text-muted fw-bold">#</span>
+                            <input type="text" name="token" class="form-control border-start-0 text-uppercase fw-semibold" 
+                                   placeholder="Enter Token (e.g. A104)" value="{{ search_token }}" required>
+                            <button class="btn btn-dark px-4 fw-medium" type="submit">Track Order</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            {% if order %}
+            <!-- Receipt Ticket Card -->
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden" id="order-ticket-card">
+                <div class="card-header bg-dark text-white text-center py-3">
+                    <h5 class="m-0 text-uppercase tracking-wider fw-bold">Musafir Cafe</h5>
+                    <small class="text-light opacity-75">Customer Waiting Ticket</small>
+                </div>
+
+                <div class="card-body p-4 font-monospace" style="background-color: #fffdf5;">
+                    <!-- Monospace ASCII Ticket Banner -->
+                    <div class="text-center my-2 p-3 border border-2 border-dashed border-dark rounded-3 bg-white shadow-sm">
+                        <div class="text-muted small">================================</div>
+                        <h4 class="fw-bold my-1 text-primary">MUSAFIR CAFE</h4>
+                        <div class="text-muted small">================================</div>
+                        
+                        <div class="py-3">
+                            <span class="text-muted small d-block">ORDER NUMBER</span>
+                            <h1 class="display-4 fw-bolder text-dark m-0" id="ticket-token">#{{ order.token_number }}</h1>
+                        </div>
+
+                        <div class="py-2 border-top border-bottom border-light">
+                            <span class="text-muted small d-block mb-1">STATUS</span>
+                            <span class="badge rounded-pill fs-6 px-3 py-2 text-uppercase id-status-badge
+                                  {% if order.status == 'placed' %}bg-secondary
+                                  {% elif order.status == 'confirmed' %}bg-primary
+                                  {% elif order.status == 'preparing' %}bg-warning text-dark
+                                  {% elif order.status == 'ready' %}bg-success
+                                  {% elif order.status == 'completed' %}bg-dark
+                                  {% else %}bg-danger{% endif %}" id="ticket-status-display">
+                                {{ order.get_status_display }}
+                            </span>
+                        </div>
+
+                        <div class="py-3">
+                            <span class="text-muted small d-block">ESTIMATED WAIT</span>
+                            <h3 class="fw-bold text-danger m-0" id="ticket-wait-display">{{ order.estimated_wait_display }}</h3>
+                        </div>
+
+                        <div class="text-muted small">================================</div>
+                    </div>
+
+                    <!-- Visual Progress Bar -->
+                    <div class="mt-4 mb-3 px-2">
+                        <h6 class="text-center font-sans-serif text-muted small text-uppercase mb-3 fw-bold">Live Status Progress</h6>
+                        <div class="progress position-relative" style="height: 10px; background-color: #e9ecef;">
+                            {% with status=order.status %}
+                            <div class="progress-bar progress-bar-striped progress-bar-animated 
+                                  {% if status == 'ready' or status == 'completed' %}bg-success{% else %}bg-warning{% endif %}" 
+                                 id="status-progress-bar"
+                                 role="progressbar" 
+                                 style="width: {% if status == 'placed' %}20%{% elif status == 'confirmed' %}40%{% elif status == 'preparing' %}65%{% elif status == 'ready' %}90%{% elif status == 'completed' %}100%{% else %}0%{% endif %};">
+                            </div>
+                            {% endwith %}
+                        </div>
+
+                        <!-- Step Labels -->
+                        <div class="d-flex justify-content-between text-center mt-2 small font-sans-serif" style="font-size: 0.75rem;">
+                            <span class="fw-bold {% if order.status in 'placed,confirmed,preparing,ready,completed' %}text-dark{% else %}text-muted{% endif %}">Placed</span>
+                            <span class="fw-bold {% if order.status in 'confirmed,preparing,ready,completed' %}text-primary{% else %}text-muted{% endif %}">Confirmed</span>
+                            <span class="fw-bold {% if order.status in 'preparing,ready,completed' %}text-warning{% else %}text-muted{% endif %}">Preparing</span>
+                            <span class="fw-bold {% if order.status in 'ready,completed' %}text-success{% else %}text-muted{% endif %}">Ready</span>
+                            <span class="fw-bold {% if order.status == 'completed' %}text-secondary{% else %}text-muted{% endif %}">Completed</span>
+                        </div>
+                    </div>
+
+                    <!-- Order Items & Customer Summary -->
+                    <div class="bg-white p-3 rounded-3 border mt-4 font-sans-serif">
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                            <span class="text-muted">Customer:</span>
+                            <span class="fw-bold">{{ order.customer_name }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                            <span class="text-muted">Order Type:</span>
+                            <span class="badge bg-outline-secondary text-dark border">{{ order.get_order_type_display }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center mb-2 pb-2 border-bottom">
+                            <span class="text-muted">Payment Method:</span>
+                            <span class="text-uppercase fw-semibold">{{ order.get_payment_method_display }} ({{ order.get_payment_status_display }})</span>
+                        </div>
+
+                        <h6 class="fw-bold mt-3 mb-2">Order Items</h6>
+                        <ul class="list-group list-group-flush mb-2">
+                            {% for item in order.items.all %}
+                            <li class="list-group-item d-flex justify-content-between align-items-center px-0 py-1 border-0">
+                                <span>{{ item.quantity }}x {{ item.menu_item.name }}</span>
+                                <span class="fw-semibold">₹{{ item.unit_price }}</span>
+                            </li>
+                            {% empty %}
+                            <li class="list-group-item text-muted px-0 py-1 border-0">Standard Order Items</li>
+                            {% endfor %}
+                        </ul>
+
+                        <div class="d-flex justify-content-between align-items-center pt-2 border-top fw-bold fs-5 text-dark">
+                            <span>Total Amount:</span>
+                            <span class="text-success">₹{{ order.total }}</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="card-footer bg-light text-center py-3">
+                    <small class="text-muted d-block mb-1">Auto-refreshing status live... Next update in <span id="poll-timer">5</span>s</small>
+                    <a href="{% url 'order_tracking' token=order.token_number %}" class="btn btn-sm btn-outline-dark">
+                        Manual Refresh
+                    </a>
+                </div>
+            </div>
+
+            <script>
+                // Live Polling JS for Order Status
+                let countdown = 5;
+                const token = "{{ order.token_number }}";
+
+                function updatePollTimer() {
+                    const timerElem = document.getElementById('poll-timer');
+                    if (timerElem) {
+                        timerElem.innerText = countdown;
+                    }
+                    if (countdown <= 0) {
+                        fetchOrderStatus();
+                        countdown = 5;
+                    } else {
+                        countdown--;
+                    }
+                }
+
+                function fetchOrderStatus() {
+                    fetch(`/order/${token}/?format=json`, {
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            const statusDisplay = document.getElementById('ticket-status-display');
+                            const waitDisplay = document.getElementById('ticket-wait-display');
+                            const progressBar = document.getElementById('status-progress-bar');
+
+                            if (statusDisplay) {
+                                statusDisplay.innerText = data.status_display;
+                                statusDisplay.className = 'badge rounded-pill fs-6 px-3 py-2 text-uppercase ';
+                                if (data.status === 'placed') statusDisplay.classList.add('bg-secondary');
+                                else if (data.status === 'confirmed') statusDisplay.classList.add('bg-primary');
+                                else if (data.status === 'preparing') statusDisplay.classList.add('bg-warning', 'text-dark');
+                                else if (data.status === 'ready') statusDisplay.classList.add('bg-success');
+                                else if (data.status === 'completed') statusDisplay.classList.add('bg-dark');
+                                else statusDisplay.classList.add('bg-danger');
+                            }
+
+                            if (waitDisplay) {
+                                waitDisplay.innerText = data.estimated_wait_display;
+                            }
+
+                            if (progressBar) {
+                                let width = '20%';
+                                if (data.status === 'confirmed') width = '40%';
+                                else if (data.status === 'preparing') width = '65%';
+                                else if (data.status === 'ready') width = '90%';
+                                else if (data.status === 'completed') width = '100%';
+                                progressBar.style.width = width;
+                            }
+                        }
+                    })
+                    .catch(err => console.log('Polling error:', err));
+                }
+
+                setInterval(updatePollTimer, 1000);
+            </script>
+
+            {% else %}
+            <!-- No Order Found Card -->
+            <div class="card border-0 shadow rounded-4 text-center py-5">
+                <div class="card-body">
+                    <div class="display-1 text-muted mb-3">🧾</div>
+                    <h4 class="fw-bold text-dark">Track Your Cafe Order</h4>
+                    <p class="text-muted max-w-md mx-auto">
+                        Enter your Order Token (e.g., <strong>A104</strong>) above to check live kitchen status and estimated wait time.
+                    </p>
+                    <a href="{% url 'place_order' %}" class="btn btn-primary px-4 py-2 rounded-pill fw-semibold mt-2">
+                        + Place a New Order
+                    </a>
+                </div>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+{% endblock body %}

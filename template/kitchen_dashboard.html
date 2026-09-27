@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+
+{% block title %}Kitchen & Admin Dashboard{% endblock title %}
+
+{% block body %}
+<div class="container-fluid py-4 px-md-5">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 pb-2 border-bottom">
+        <div>
+            <h2 class="fw-bold m-0 text-dark">👨‍🍳 Kitchen & Admin Dashboard</h2>
+            <p class="text-muted m-0">Live Order Queue & Status Management</p>
+        </div>
+        <div class="d-flex gap-2 align-items-center">
+            <a href="{% url 'place_order' %}" class="btn btn-sm btn-primary rounded-pill px-3">
+                + New Order
+            </a>
+            <a href="{% url 'admin:index' %}" target="_blank" class="btn btn-sm btn-outline-dark rounded-pill px-3">
+                Django Admin ⚙️
+            </a>
+        </div>
+    </div>
+
+    <!-- Live Status Metric Cards -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md">
+            <div class="card border-0 shadow-sm rounded-3 bg-secondary text-white">
+                <div class="card-body py-3 text-center">
+                    <h6 class="text-uppercase small fw-bold text-white-50 m-0">Placed</h6>
+                    <h3 class="fw-bolder m-0">{{ placed_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md">
+            <div class="card border-0 shadow-sm rounded-3 bg-primary text-white">
+                <div class="card-body py-3 text-center">
+                    <h6 class="text-uppercase small fw-bold text-white-50 m-0">Confirmed</h6>
+                    <h3 class="fw-bolder m-0">{{ confirmed_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md">
+            <div class="card border-0 shadow-sm rounded-3 bg-warning text-dark">
+                <div class="card-body py-3 text-center">
+                    <h6 class="text-uppercase small fw-bold text-dark-50 m-0">Preparing</h6>
+                    <h3 class="fw-bolder m-0">{{ preparing_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md">
+            <div class="card border-0 shadow-sm rounded-3 bg-success text-white">
+                <div class="card-body py-3 text-center">
+                    <h6 class="text-uppercase small fw-bold text-white-50 m-0">Ready</h6>
+                    <h3 class="fw-bolder m-0">{{ ready_count }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md">
+            <div class="card border-0 shadow-sm rounded-3 bg-dark text-white">
+                <div class="card-body py-3 text-center">
+                    <h6 class="text-uppercase small fw-bold text-white-50 m-0">Completed</h6>
+                    <h3 class="fw-bolder m-0">{{ completed_count }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Active Orders List / Cards -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+        <div class="card-header bg-white py-3 border-bottom d-flex justify-content-between align-items-center">
+            <h5 class="fw-bold m-0">Current Orders Queue</h5>
+            <span class="badge bg-dark rounded-pill px-3 py-2">Total Orders: {{ orders|length }}</span>
+        </div>
+
+        <div class="card-body p-0">
+            {% if orders %}
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light text-uppercase small text-muted">
+                        <tr>
+                            <th class="ps-4" style="width: 120px;">Token</th>
+                            <th>Customer & Details</th>
+                            <th>Items</th>
+                            <th>Order Type</th>
+                            <th style="width: 160px;">Status</th>
+                            <th style="width: 150px;">Est. Wait</th>
+                            <th class="pe-4 text-end" style="width: 280px;">Action / Transition</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in orders %}
+                        <tr class="{% if order.status == 'ready' %}table-success{% elif order.status == 'completed' %}opacity-75{% endif %}">
+                            <td class="ps-4">
+                                <a href="{% url 'order_tracking' token=order.token_number %}" 
+                                   class="font-monospace fw-bolder fs-5 text-decoration-none text-dark d-block">
+                                    #{{ order.token_number }}
+                                </a>
+                                <small class="text-muted d-block" style="font-size: 0.75rem;">{{ order.created_at|date:"H:i A" }}</small>
+                            </td>
+
+                            <td>
+                                <strong class="d-block">{{ order.customer_name }}</strong>
+                                <small class="text-muted">{{ order.customer_phone|default:"No phone" }}</small>
+                            </td>
+
+                            <td>
+                                <ul class="list-unstyled m-0 small">
+                                    {% for item in order.items.all %}
+                                    <li><span class="badge bg-secondary me-1">{{ item.quantity }}x</span> {{ item.menu_item.name }}</li>
+                                    {% empty %}
+                                    <li class="text-muted">Standard Combo Item</li>
+                                    {% endfor %}
+                                </ul>
+                            </td>
+
+                            <td>
+                                <span class="badge bg-light text-dark border text-capitalize">
+                                    {{ order.get_order_type_display }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge rounded-pill text-uppercase px-3 py-2 fs-6
+                                      {% if order.status == 'placed' %}bg-secondary
+                                      {% elif order.status == 'confirmed' %}bg-primary
+                                      {% elif order.status == 'preparing' %}bg-warning text-dark
+                                      {% elif order.status == 'ready' %}bg-success
+                                      {% elif order.status == 'completed' %}bg-dark
+                                      {% else %}bg-danger{% endif %}">
+                                    {{ order.get_status_display }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <form action="{% url 'update_order_status' token=order.token_number %}" method="POST" class="d-flex align-items-center gap-1">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="status" value="{{ order.status }}">
+                                    <input type="number" name="estimated_wait_minutes" value="{{ order.estimated_wait_minutes }}" 
+                                           class="form-control form-control-sm text-center fw-bold" style="width: 70px;" min="0">
+                                    <span class="small text-muted">m</span>
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary p-1" title="Save wait time">💾</button>
+                                </form>
+                            </td>
+
+                            <td class="pe-4 text-end">
+                                <div class="btn-group btn-group-sm" role="group">
+                                    {% if order.status == 'placed' %}
+                                    <form action="{% url 'update_order_status' token=order.token_number %}" method="POST" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="confirmed">
+                                        <button type="submit" class="btn btn-primary font-sans-serif fw-bold">
+                                            ➡️ Confirm
+                                        </button>
+                                    </form>
+                                    {% elif order.status == 'confirmed' %}
+                                    <form action="{% url 'update_order_status' token=order.token_number %}" method="POST" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="preparing">
+                                        <button type="submit" class="btn btn-warning text-dark font-sans-serif fw-bold">
+                                            🔥 Prepare
+                                        </button>
+                                    </form>
+                                    {% elif order.status == 'preparing' %}
+                                    <form action="{% url 'update_order_status' token=order.token_number %}" method="POST" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="ready">
+                                        <button type="submit" class="btn btn-success font-sans-serif fw-bold">
+                                            ✅ Ready
+                                        </button>
+                                    </form>
+                                    {% elif order.status == 'ready' %}
+                                    <form action="{% url 'update_order_status' token=order.token_number %}" method="POST" class="d-inline">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="status" value="completed">
+                                        <button type="submit" class="btn btn-dark font-sans-serif fw-bold">
+                                            🏁 Complete
+                                        </button>
+                                    </form>
+                                    {% else %}
+                                    <span class="text-muted small">Done</span>
+                                    {% endif %}
+                                    
+                                    <!-- Change Status Dropdown for manual overrides -->
+                                    <button class="btn btn-outline-secondary dropdown-toggle ms-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                        Override
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end shadow">
+                                        {% for code, label in status_choices %}
+                                        <li>
+                                            <form action="{% url 'update_order_status' token=order.token_number %}" method="POST">
+                                                {% csrf_token %}
+                                                <input type="hidden" name="status" value="{{ code }}">
+                                                <button type="submit" class="dropdown-item {% if order.status == code %}fw-bold active{% endif %}">
+                                                    Mark as {{ label }}
+                                                </button>
+                                            </form>
+                                        </li>
+                                        {% endfor %}
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <h5 class="text-muted">No orders in queue right now.</h5>
+                <a href="{% url 'place_order' %}" class="btn btn-sm btn-outline-primary mt-2">Place Test Order</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto refresh kitchen dashboard every 15 seconds
+    setTimeout(function() {
+        window.location.reload();
+    }, 15000);
+</script>
+{% endblock body %}

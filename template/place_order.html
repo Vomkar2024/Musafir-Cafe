@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Place Order{% endblock title %}
+
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
+                <div class="card-header bg-dark text-white text-center py-3">
+                    <h4 class="fw-bold m-0">☕ Place Musafir Cafe Order</h4>
+                    <small class="text-light opacity-75">Instant Token Generation & Waiting System</small>
+                </div>
+                
+                <div class="card-body p-4">
+                    <form action="{% url 'place_order' %}" method="POST">
+                        {% csrf_token %}
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Customer Name</label>
+                            <input type="text" name="customer_name" class="form-control rounded-3" placeholder="e.g. Rahul Sharma" required>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Phone Number</label>
+                                <input type="tel" name="customer_phone" class="form-control rounded-3" placeholder="e.g. 9876543210" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Email (Optional)</label>
+                                <input type="email" name="customer_email" class="form-control rounded-3" placeholder="name@example.com">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Order Type</label>
+                                <select name="order_type" class="form-select rounded-3">
+                                    <option value="dine_in" selected>🍽️ Dine In</option>
+                                    <option value="takeaway">🥡 Takeaway</option>
+                                    <option value="delivery">🛵 Delivery</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Payment Method</label>
+                                <select name="payment_method" class="form-select rounded-3">
+                                    <option value="cash" selected>💵 Cash / COD</option>
+                                    <option value="gpay">📱 GPay / UPI</option>
+                                    <option value="card">💳 Credit/Debit Card</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Select Menu Item</label>
+                            <select name="menu_item_id" class="form-select rounded-3">
+                                {% for item in menu_items %}
+                                <option value="{{ item.id }}">{{ item.name }} - ₹{{ item.price }} ({{ item.get_category_display }})</option>
+                                {% empty %}
+                                <option value="">Special Musafir Cafe Combo - ₹150</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="row g-3 mb-4">
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Quantity</label>
+                                <input type="number" name="quantity" class="form-control rounded-3" value="1" min="1" max="10">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-semibold">Est. Preparation Time</label>
+                                <div class="input-group">
+                                    <input type="number" name="estimated_wait_minutes" class="form-control rounded-3" value="15" min="1">
+                                    <span class="input-group-text">mins</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-dark w-100 py-3 rounded-pill fw-bold fs-5 shadow-sm">
+                            🎟️ Generate Order Ticket
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock body %}

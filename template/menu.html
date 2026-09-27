@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+
+{% block title %}Menu{% endblock title %}
+
+{% block body %}
+<div class="container mt-5">
+    <h1 class="text-center mb-4">Our Menu</h1>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        {% for item in menu_items %}
+        <div class="col">
+            <div class="card h-100 shadow-sm">
+                {% if item.image %}
+                    <img src="{{ item.image.url }}" class="card-img-top" alt="{{ item.name }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                    <div class="card-img-top bg-secondary text-white d-flex align-items-center justify-content-center" style="height: 200px;">
+                        No Image Available
+                    </div>
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ item.name }}</h5>
+                    <p class="card-text text-muted">{{ item.description }}</p>
+                    <h4 class="mt-auto text-success">₹{{ item.price }}</h4>
+                    <button class="btn btn-primary mt-3 w-100">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center">
+            <p class="lead">No menu items are currently available.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock body %}
